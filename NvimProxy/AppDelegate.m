@@ -12,8 +12,8 @@
 
 //NSString *const APP_PATH = @"/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl";
 //NSString *const LINE_FORMAT = @"%@:%d;
-NSString *const APP_PATH = @"/Applications/Visual Studio Code.app/Contents/MacOS/Electron";
-NSString *const LINE_FORMAT = @"%@:%d:0";
+NSString *const APP_PATH = @"/Users/eugene/test.py";
+NSString *const LINE_FORMAT = @"%d";
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification {
     [[NSAppleEventManager sharedAppleEventManager]
@@ -21,7 +21,20 @@ NSString *const LINE_FORMAT = @"%@:%d:0";
      forEventClass:'aevt' andEventID:'odoc'];
 }
 
+- (void)bringiTermInFront{
+    NSDictionary* errorDict;
+    NSAppleEventDescriptor* returnDescriptor = NULL;
+    
+    NSAppleScript* scriptObject = [[NSAppleScript alloc] initWithSource:
+                                   @"tell application \"iTerm\" activate end tell"];
+    
+    returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
+}
+
 - (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
+    
+    [self bringiTermInFront];
+    
     NSTask *task;
     task = [[NSTask alloc] init];
     [task setLaunchPath:APP_PATH];
@@ -38,14 +51,31 @@ NSString *const LINE_FORMAT = @"%@:%d:0";
     
     const AEKeyword filekey  = '----';
     NSString *filepath = [[[event descriptorForKeyword:filekey] stringValue] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
-    NSString *filepathWithLine = [NSString stringWithFormat:LINE_FORMAT, filepath, x];
-    filepathWithLine = [filepathWithLine stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    filepath = [filepath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    NSString *lineNumber = [NSString stringWithFormat:LINE_FORMAT, x];
+    NSString *debug = [NSString stringWithFormat:@"%@ - %@", filepath, lineNumber];
+    
+
+    
     NSArray *arguments;
     // wh: had to add more flags to the arguments array
-    arguments = [NSArray arrayWithObjects: @"-r", @"-g", filepathWithLine, nil];
+    arguments = [NSArray arrayWithObjects: @"--remote", filepath, @"-c", lineNumber, nil];
+    
+    
+    NSString * result = [[arguments valueForKey:@"description"] componentsJoinedByString:@"\n"];
+    
+    
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert setMessageText: result];
+    [alert runModal];
+    
     [task setArguments: arguments];
     
+    
+    
     [task launch];
+ 
     
     [[NSApplication sharedApplication] terminate:nil];
 }

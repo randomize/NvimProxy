@@ -1,4 +1,7 @@
 
-SublimeProxy.xcodeproj/project.xcworkspace
+NvimProxy.xcodeproj/project.xcworkspace
 
-SublimeProxy.xcodeproj/xcuserdata
+NvimProxy.xcodeproj/xcuserdata
+
+.DS_Store
+
