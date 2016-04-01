@@ -12,7 +12,7 @@
 
 //NSString *const APP_PATH = @"/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl";
 //NSString *const LINE_FORMAT = @"%@:%d;
-NSString *const APP_PATH = @"/Users/eugene/test.py";
+NSString *const APP_PATH = @"/usr/local/bin/nvr";
 NSString *const LINE_FORMAT = @"%d";
 
 - (void)applicationWillFinishLaunching:(NSNotification *)aNotification {
@@ -26,14 +26,13 @@ NSString *const LINE_FORMAT = @"%d";
     NSAppleEventDescriptor* returnDescriptor = NULL;
     
     NSAppleScript* scriptObject = [[NSAppleScript alloc] initWithSource:
-                                   @"tell application \"iTerm\" activate end tell"];
+                                   @"tell application \"iTerm\" \n activate \n end tell"];
     
     returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
 }
 
 - (void)handleAppleEvent:(NSAppleEventDescriptor *)event withReplyEvent:(NSAppleEventDescriptor *)replyEvent {
     
-    [self bringiTermInFront];
     
     NSTask *task;
     task = [[NSTask alloc] init];
@@ -68,15 +67,16 @@ NSString *const LINE_FORMAT = @"%d";
     
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText: result];
-    [alert runModal];
+    //[alert runModal];
     
     [task setArguments: arguments];
     
     
     
     [task launch];
- 
     
+    [self bringiTermInFront];
+
     [[NSApplication sharedApplication] terminate:nil];
 }
 

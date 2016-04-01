@@ -1,12 +1,26 @@
-# VSC Proxy
+# Nvim Proxy
 
 To install:
-- Build it or use the prebuilt package found in Builds (was compiled on Mac OSX
-10.8 64-bit)
-- Put VSCProxy.app wherever you want
-- Make sure original Visual Studio Code.app is in the Applications folder
-- Point Unity's External Editor setting at the Sublime Proxy app
+- Build it (was compiled on Mac OSX 10.11.2 64-bit)
+- Put NvimProxy.app wherever you want
+- Make sure you have neovim and neovim remote installed from brew:
+```
+    brew tap neovim/neovim
+    brew install nvim
+    pip3 install neovim-remote
+```
+- Make sure you have iTerm installed (and configured to have global hotkey toggle)
+- Point Unity's External Editor setting at the NvimProxy app
+- Launch iTerm2, best use with tmux
+- Laucnh neovim in remote mode with following socket:
+```
+$ NVIM_LISTEN_ADDRESS=/tmp/nvimsocket nvim
+```
+- Double-click console message/monoscript to bring iTerm automatically in
+  foreground with neovim showing corresponding file at correct line.
+
 
 Special thanks to:
 - Tim Keating who got the barebones event handler setup
 - Allan Lavell who did the heavy lifting for SublimeProxy (https://github.com/thinkrad/SublimeProxy)
+- CapnCromulent for VSCProxy, which was used as base for this little helper
