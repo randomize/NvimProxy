@@ -10,8 +10,7 @@
 
 @implementation AppDelegate
 
-//NSString *const APP_PATH = @"/Applications/Sublime Text 2.app/Contents/SharedSupport/bin/subl";
-//NSString *const LINE_FORMAT = @"%@:%d;
+
 NSString *const APP_PATH = @"/usr/local/bin/nvr";
 NSString *const LINE_FORMAT = @"%d";
 
@@ -26,7 +25,7 @@ NSString *const LINE_FORMAT = @"%d";
     NSAppleEventDescriptor* returnDescriptor = NULL;
     
     NSAppleScript* scriptObject = [[NSAppleScript alloc] initWithSource:
-                                   @"tell application \"iTerm\" \n activate \n end tell"];
+                                   @"tell application \"VimR\" \n activate \n end tell"];
     
     returnDescriptor = [scriptObject executeAndReturnError: &errorDict];
 }
@@ -42,28 +41,17 @@ NSString *const LINE_FORMAT = @"%d";
     
     unsigned char *buffer = malloc(sizeof(UInt16));
     [eventData getBytes: buffer range:NSMakeRange(422, sizeof(UInt16))];
-    UInt16 x = *(UInt16 *)buffer;
-    if (x == ((UInt16)65534)) {
-        x = 0;
-    }
-    x += 1;
-    
+
     const AEKeyword filekey  = '----';
     NSString *filepath = [[[event descriptorForKeyword:filekey] stringValue] stringByReplacingOccurrencesOfString:@"file://" withString:@""];
     filepath = [filepath stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    
-    NSString *lineNumber = [NSString stringWithFormat:LINE_FORMAT, x];
-    NSString *debug = [NSString stringWithFormat:@"%@ - %@", filepath, lineNumber];
-    
 
-    
     NSArray *arguments;
     // wh: had to add more flags to the arguments array
-    arguments = [NSArray arrayWithObjects: @"--remote", filepath, @"-c", lineNumber, nil];
+    arguments = [NSArray arrayWithObjects: filepath, nil];
     
     
     NSString * result = [[arguments valueForKey:@"description"] componentsJoinedByString:@"\n"];
-    
     
     NSAlert *alert = [[NSAlert alloc] init];
     [alert setMessageText: result];
